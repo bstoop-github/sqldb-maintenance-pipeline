@@ -1,0 +1,40 @@
+jobs:
+  
+ - job: Prepare
+   workspace:
+     clean: resources
+   displayName: 'Prepare Workspace'
+
+   pool:
+     vmImage: 'windows-latest'
+     workspace:
+       clean: all
+
+   steps:
+
+     - task: PowerShell@2
+       displayName: 'Show variables'
+       inputs:
+         targetType: 'inline' # Optional. Options: filePath, inline
+         script: 'Get-ChildItem env:' # Required when targetType == Inline
+       enabled: true
+
+     - task: CopyFiles@2
+       inputs:
+         SourceFolder: '$(Build.SourcesDirectory)'
+         Contents: |
+           **/*
+           !.git/**/*
+         TargetFolder: '$(Build.ArtifactStagingDirectory)'
+ 
+     - task: PublishBuildArtifacts@1    
+       displayName: 'Publish Artifact: drop'
+       inputs:
+         PathtoPublish: '$(build.artifactstagingdirectory)'    
+
+     - task: PowerShell@2
+       displayName: 'Listing directory content'
+       inputs:
+         targetType: 'inline' # Optional. Options: filePath, inline
+         script: |
+           get-childItem $(Build.ArtifactStagingDirectory) -recurse -depth 5

@@ -1,0 +1,7 @@
+variables:
+    System.Debug: false
+    environment: 'p'
+    SubscriptionID: "xxx"
+    serviceConnection: "name-of-your-service-connection"
+    sqlServerLogin: 'sqlsausername'
+    sqlServerPassword: 'setyoursqladminpasswordhEr3!'

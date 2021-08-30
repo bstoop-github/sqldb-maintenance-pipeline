@@ -1,0 +1,56 @@
+parameters:
+  - name: serviceConnection
+    displayName: "The service connection"
+    type: string
+  - name: environment
+    displayName: "The environment to deploy"
+    type: string
+  - name: deploymentId
+    displayName: "DeploymentId"
+    type: string
+  - name: sqlServerLogin
+    displayName: "Login for the SQL SA user"
+    type: string
+  - name: sqlServerPassword
+    displayName: "Password for the SQL SA user"
+    type: string      
+  - name: artifactName
+    displayName: "Name of the artifacts folder"
+    type: string              
+
+jobs:
+  - deployment: ExecuteMaintenanceJobs
+    workspace:
+      clean: all
+    displayName: 'SQL - Execute maintenance jobs'
+    environment: '${{ lower(parameters.environment) }}'
+    strategy:
+      runOnce:
+        deploy:
+          steps:        
+
+          - task: PowerShell@2
+            displayName: 'Show variables used in this stage'
+            inputs:
+              targetType: 'inline' # Optional. Options: filePath, inline
+              script: 'Get-ChildItem env:' # Required when targetType == Inline
+            enabled: true                
+
+#Use if you want to retrieve variable values from keyvault
+          #- task: AzureKeyVault@1
+          #  displayName: 'Get Keyvault Secrets'            
+          #  inputs:
+          #    azureSubscription: '${{ variables.serviceConnection }}'
+          #    KeyVaultName: '$(KeyVaultName)'
+          #    SecretsFilter: '*'
+          #    RunAsPreJob: true                
+              
+          - task: AzureCLI@2
+            displayName: 'Optimizing SQL databases'
+            inputs:
+              azureSubscription: '${{ parameters.serviceConnection }}'
+              scriptType: ps              
+              ScriptPath: '$(Pipeline.Workspace)/$(artifactName)/deploy/scripts/Execute-SqlStoredProcedure.ps1'
+              arguments: '-deploymentId "$(deploymentId)" -sqlServerLogin "$(sqlServerLogin)" -sqlServerPassword "$(sqlServerPassword)" -ResourceGroupName "$(ResourceGroupName)" -sqlServerName "$(sqlServerName)" -createStoredProcedure "$(Pipeline.Workspace)/$(artifactName)/deploy/scripts/createStoredProcedure.sql"'
+            continueOnError: true                   
+            enabled: true

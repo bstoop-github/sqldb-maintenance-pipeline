@@ -1,0 +1,4 @@
+variables:
+    artifactName: 'drop'
+    ResourceGroupName: 'name-of-resource-group'
+    sqlServerName 'name-of-sql-server'

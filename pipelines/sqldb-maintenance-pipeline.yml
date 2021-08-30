@@ -1,0 +1,17 @@
+pool:
+  vmImage: 'windows-latest'
+  workspace:
+    clean: all
+
+schedules:
+- cron: "0 12 * * 0"
+  displayName: Weekly Sunday build
+  branches:
+    include:
+    - main
+  always: true
+
+trigger: none
+
+extends:
+  template: ./templates/stages-sqldb-maintenance.yml

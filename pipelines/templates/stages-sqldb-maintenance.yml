@@ -1,0 +1,68 @@
+stages:
+
+ - stage: Prepare
+   variables:
+     - template: ../variables/variables-generic.yml    
+
+   jobs:
+     - template: ./prepare.yml     
+
+ - stage: TST
+   dependsOn: 
+    - prepare
+   condition: in(dependencies.prepare.result, 'Succeeded')
+   variables:
+     - template: ../variables/variables-tst.yml
+     - template: ../variables/variables-generic.yml
+   
+   jobs:
+
+     - template: ./template-sqldb-maintenance.yml
+       parameters:
+         serviceConnection: ${{ variables.serviceConnection }}
+         environment: ${{ variables.environment }}
+         deploymentId: ${{ variables.deploymentId }}
+         sqlServerLogin: ${{ variables.sqlServerLogin }}
+         sqlServerPassword: ${{ variables.sqlServerPassword }}            
+         artifactName: ${{ variables.artifactName }}              
+
+#  - stage: ACC
+#    dependsOn: 
+#    - prepare
+#    - TSTmaintenance
+#    condition: in(dependencies.TSTmaintenance.result, 'Succeeded', 'Skipped')   
+#    variables:
+#      - template: ../variables/variables-acc.yml
+#      - template: ../variables/variables-generic.yml
+#    
+#   jobs:
+#
+#     - template: ./template-sqldb-maintenance.yml
+#       parameters:
+#         serviceConnection: ${{ variables.serviceConnection }}
+#         environment: ${{ variables.environment }}
+#         deploymentId: ${{ variables.deploymentId }}
+#         sqlServerLogin: ${{ variables.sqlServerLogin }}
+#         sqlServerPassword: ${{ variables.sqlServerPassword }}     
+#         artifactName: ${{ variables.artifactName }}                
+
+#
+#  - stage: PRD
+#    dependsOn: 
+#    - prepare
+#    - ACCmaintenance
+#    condition: in(dependencies.ACCmaintenance.result, 'Succeeded', 'Skipped')   
+#    variables:
+#      - template: ../variables/variables-prd.yml
+#      - template: ../variables/variables-generic.yml
+#    
+#   jobs:
+#
+#     - template: ./template-sqldb-maintenance.yml
+#       parameters:
+#         serviceConnection: ${{ variables.serviceConnection }}
+#         environment: ${{ variables.environment }}
+#         deploymentId: ${{ variables.deploymentId }}
+#         sqlServerLogin: ${{ variables.sqlServerLogin }}
+#         sqlServerPassword: ${{ variables.sqlServerPassword }}            
+#         artifactName: ${{ variables.artifactName }}         
