@@ -1,11 +1,14 @@
 # Introduction 
-Within this blog post you will be setting up a YAML pipeline that will perform maintenance on your SQL Azure databases, creating and executing a stored procedure running on a scheduled base.
+Within this blog post you will be setting up a YAML pipeline that will perform maintenance on your SQL Azure databases.
+Creating and executing a stored procedure running on a scheduled base.
 
-    Benefits of using Azure DevOps pipeline as your scheduler is that it is free, is has no external dependencies, it does not use 'run-as-account' that might expire and it is easy to setup/maintain.
-    Since SQL Azure does not support SQL agent and you do want to maintain the indexes on your databases on a periodic base, this is the solution I came up with.
+Benefits of using Azure DevOps pipeline as your scheduler is that it is free, 
+is has no external dependencies, it does not use 'run-as-account' that might expire and it is easy to setup/maintain.
+Since SQL Azure does not support SQL agent and you do want to maintain the indexes on your databases on a periodic base,
+this is the solution I came up with.
 
-    It makes use of the stored procedure created by Yochanan Rachamim.
-    https://github.com/yochananrachamim/AzureSQL/blob/master/AzureSQLMaintenance.txt, all credits for him! 
+It makes use of the stored procedure created by Yochanan Rachamim.
+https://github.com/yochananrachamim/AzureSQL/blob/master/AzureSQLMaintenance.txt, all credits for him! 
     
 # Prerequisites
 
