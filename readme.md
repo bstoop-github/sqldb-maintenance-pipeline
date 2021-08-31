@@ -1,5 +1,5 @@
 # Introduction 
-Within this blog post you will be setting up a YAML pipeline that will perform maintenance on your SQL Azure databases.
+Within this repo you will be setting up a YAML pipeline that will perform maintenance on your SQL Azure databases.
 Creating and executing a stored procedure running on a scheduled base.
 
 Benefits of using Azure DevOps pipeline as your scheduler is that it is free, 

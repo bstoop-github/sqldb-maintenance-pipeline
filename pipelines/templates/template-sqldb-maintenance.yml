@@ -5,9 +5,6 @@ parameters:
   - name: environment
     displayName: "The environment to deploy"
     type: string
-  - name: deploymentId
-    displayName: "DeploymentId"
-    type: string
   - name: sqlServerLogin
     displayName: "Login for the SQL SA user"
     type: string
@@ -16,7 +13,13 @@ parameters:
     type: string      
   - name: artifactName
     displayName: "Name of the artifacts folder"
-    type: string              
+    type: string
+  - name: sqlServerName
+    displayName: "sqlServerName"
+    type: string
+  - name: ResourceGroupName
+    displayName: "ResourceGroupName"
+    type: string                      
 
 jobs:
   - deployment: ExecuteMaintenanceJobs
@@ -51,6 +54,6 @@ jobs:
               azureSubscription: '${{ parameters.serviceConnection }}'
               scriptType: ps              
               ScriptPath: '$(Pipeline.Workspace)/$(artifactName)/deploy/scripts/Execute-SqlStoredProcedure.ps1'
-              arguments: '-deploymentId "$(deploymentId)" -sqlServerLogin "$(sqlServerLogin)" -sqlServerPassword "$(sqlServerPassword)" -ResourceGroupName "$(ResourceGroupName)" -sqlServerName "$(sqlServerName)" -createStoredProcedure "$(Pipeline.Workspace)/$(artifactName)/deploy/scripts/createStoredProcedure.sql"'
+              arguments: '-sqlServerLogin "$(sqlServerLogin)" -sqlServerPassword "$(sqlServerPassword)" -ResourceGroupName "$(ResourceGroupName)" -sqlServerName "$(sqlServerName)" -createStoredProcedure "$(Pipeline.Workspace)/$(artifactName)/deploy/scripts/createStoredProcedure.sql"'
             continueOnError: true                   
             enabled: true
