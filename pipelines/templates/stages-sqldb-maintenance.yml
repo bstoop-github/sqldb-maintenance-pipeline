@@ -21,10 +21,11 @@ stages:
        parameters:
          serviceConnection: ${{ variables.serviceConnection }}
          environment: ${{ variables.environment }}
-         deploymentId: ${{ variables.deploymentId }}
          sqlServerLogin: ${{ variables.sqlServerLogin }}
          sqlServerPassword: ${{ variables.sqlServerPassword }}            
-         artifactName: ${{ variables.artifactName }}              
+         artifactName: ${{ variables.artifactName }}          
+         sqlServerName: ${{ variables.sqlServerName }}            
+         ResourceGroupName: ${{ variables.ResourceGroupName }}                       
 
 #  - stage: ACC
 #    dependsOn: 
