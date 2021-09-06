@@ -68,7 +68,7 @@ function Get-CurrentSqlCmdPath {
 
     $qcd = "AzureSQLMaintenance 'all'"
     $SQLServer = "$($sqlServerName).database.windows.net"
-    $GetAllDatabases = az sql db list --resource-group $ResourceGroupName --server $ServerName --query '[].name' -o tsv
+    $GetAllDatabases = az sql db list --resource-group $ResourceGroupName --server $sqlServerName --query '[].name' -o tsv
     $localIp = (Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip)
 
 # Add IP address of build agent to whitelisting SQL server
@@ -79,14 +79,14 @@ function Get-CurrentSqlCmdPath {
     Write-Host "$localIp"
 
     try {
-            az sql server firewall-rule create -g $ResourceGroupName -s $ServerName -n "buildagentIP" --start-ip-address $localIp --end-ip-address $localIp
+            az sql server firewall-rule create -g $ResourceGroupName -s $sqlServerName -n "buildagentIP" --start-ip-address $localIp --end-ip-address $localIp
         }
     catch {
             Write-Error $_.Exception.Message
             "Rule is already present." 
         }
 
-    az sql server firewall-rule update -g $ResourceGroupName -s $ServerName -n "buildagentIP" --start-ip-address $localIp --end-ip-address $localIp
+    az sql server firewall-rule update -g $ResourceGroupName -s $sqlServerName -n "buildagentIP" --start-ip-address $localIp --end-ip-address $localIp
 
 
 # Validating availability of sql cmd
