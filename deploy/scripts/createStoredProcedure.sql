@@ -538,9 +538,22 @@ begin
 		insert into AzureSQLMaintenanceLog values(@OperationTime,null,cast(@@rowcount as varchar(100))+ ' rows purged from log table because number of operations to keep is set to: ' + cast( @KeepXOperationInLog as varchar(100)),sysdatetime(),sysdatetime(),'Cleanup Log Table')
 	end
 
-	if @ScriptHasAnError=0 	raiserror('Done',0,0)
-	if @LogToTable=1 insert into AzureSQLMaintenanceLog values(@OperationTime,null,null,sysdatetime(),sysdatetime(),'End of operation')
-	if @ScriptHasAnError=1 	raiserror('Script has errors - please review the log.',16,1)
-end
+	if @ScriptHasAnError=0 	
+		begin
+			raiserror('Done - Finished maintenance',0,0)
+			print 'Execute AzureSQLMaintenance to get help' 
+		end			
+	if @LogToTable=1
+		begin
+			insert into AzureSQLMaintenanceLog values(@OperationTime,null,null,sysdatetime(),sysdatetime(),'End of operation')
+		end			
+
+	if @ScriptHasAnError=1
+		begin
+	 		raiserror('Script has errors - please review the log.',16,1)
+			 print 'Execute AzureSQLMaintenance to get help' 
+		end		
+
+RETURN
+END
 GO
-EXIT

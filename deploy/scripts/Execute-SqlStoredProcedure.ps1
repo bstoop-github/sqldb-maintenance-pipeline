@@ -54,19 +54,21 @@ function Get-CurrentSqlCmdPath {
 
 #Only use below while testing locally:
 
-    #$subscriptionId = "xxx"
-    #$tenantId = "xxx"
-    #az login --tenant "$tenantId"
-    #az account set --subscription "$subscriptionId"
-    #az account list    
-    
+    # $subscriptionId = "xxx"
+    # $tenantId = "xxx"
+    # az login --tenant "$tenantId"
+    # az account set --subscription "$subscriptionId"
+    # az account list    
+
+    # $sqlServerName = "xxx"
+    # $ResourceGroupName = "xxx"
     #$sqlServerLogin = "xxx"
     #$sqlServerPassword = "xxx" 
     #$createStoredProcedure = "xxx\createStoredProcedure.sql"
 
 #variables
 
-    $qcd = "AzureSQLMaintenance 'all'"
+    $qcd = "exec AzureSQLMaintenance 'all', @LogToTable=1"
     $SQLServer = "$($sqlServerName).database.windows.net"
     $GetAllDatabases = az sql db list --resource-group $ResourceGroupName --server $sqlServerName --query '[].name' -o tsv
     $localIp = (Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip)
@@ -102,7 +104,7 @@ function Get-CurrentSqlCmdPath {
             $sqlcmd = $true
         }
 
-    if($sqlcmd -eq $false){
+if($sqlcmd -eq $false){
 
 #install choco
 
@@ -142,7 +144,7 @@ function Get-CurrentSqlCmdPath {
     else{
             Write-Output "Sqlserver-cmdlineutils is already installed"
         }
-}
+}        
 
 #Create stored procedures on all databases
 
@@ -155,13 +157,22 @@ function Get-CurrentSqlCmdPath {
         }
     }
 
-#Execute stored procedures on all databases
+#Executing stored procedures on all databases
 
-    foreach($db in $GetAllDatabases){
-        if ($db -ne "master"){
+foreach($db in $GetAllDatabases){
 
-            Sqlcmd -S $SQLServer -d $db -q $qcd -U $sqlServerLogin -P $sqlServerPassword
-            Write-Host "Stored procedure executed on database $db"
+    if ($db -ne 'master'){
 
-        }
-    }
+        $startDate = Get-Date 
+        Write-Host "Starting stored procedure on $db at $startDate"
+
+        $osqlexe = (get-command sqlcmd.exe | Select-Object source).Source 
+        $args = "-S $SQLServer -d $db -Q " + '"' + $qcd + '"' + " -U $sqlServerLogin -P $sqlServerPassword"             
+        Start-Process `"$osqlexe`" -ArgumentList $args -Wait -NoNewWindow
+            
+        }  
+
+    $currentTime = Get-Date
+    Write-Host "Finished stored procedure on $db at $currentTime"
+
+}
