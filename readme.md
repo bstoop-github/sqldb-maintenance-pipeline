@@ -37,7 +37,7 @@ To be found in the following section:
         - main
     always: true
 
-Resuling the pipeline to run on a weekly base, each sunday.
+Resulting the pipeline to run on a weekly base, each sunday.
 
 ___
 
